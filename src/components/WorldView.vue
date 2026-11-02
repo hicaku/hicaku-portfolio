@@ -151,9 +151,9 @@ onMounted(async () => {
       onInteract: () => {
         if (props.holding || state.menu) return
         if (boardable()) return board(state.panel!)
-        // E on an auto-opened card pins it: the world pauses so you can read at leisure
-        if (state.panel && state.panelAuto) state.panelAuto = false
-        else if (!state.panel && state.near) openPanel(state.near)
+        // E closes whatever card is open (or opens the nearby one if somehow none is)
+        if (state.panel) closeOverlays()
+        else if (state.near) openPanel(state.near)
       },
       onLabelClick: (id) => {
         if (props.holding) return
@@ -238,7 +238,10 @@ let kIdx = 0
 function onKey(e: KeyboardEvent) {
   const k = e.key.toLowerCase()
   if (k === 'escape') closeOverlays()
-  if (k === 'enter' && !(e.target instanceof HTMLButtonElement) && !props.holding && !state.menu && boardable()) board(state.panel!)
+  if (k === 'enter' && !(e.target instanceof HTMLButtonElement) && !props.holding && !state.menu && state.panel) {
+    if (boardable()) board(state.panel)
+    else closeOverlays()
+  }
   if (k === KONAMI[kIdx]) {
     kIdx++
     if (kIdx === KONAMI.length) {
