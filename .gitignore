@@ -1,0 +1,10 @@
+﻿node_modules
+dist
+.vercel
+*.local
+.DS_Store
+.vercel
+.env*
+
+# private original of the CV (the redacted public copy lives in public/)
+/Hikmet Kufteoglu.pdf
