@@ -356,32 +356,74 @@ export function rumeliHisari(): Tickable {
 // ───────────────────────────── Malta ─────────────────────────────
 
 export function valletta(): Tickable {
+  // Valletta's bastioned fortifications: a star fort with sloped walls, pointed bastions and sentry turrets (gardjola)
   const g = new THREE.Group()
   const SAND = 0xffc77a
-  // Our Lady of Mount Carmel dome
-  const base = neonBox(9, 7, 13, SAND)
-  base.position.y = 3.5
-  g.add(base)
-  const drum = solid(new THREE.CylinderGeometry(3.1, 3.2, 2.4, 18), SAND, 10)
-  drum.position.y = 8.2
-  g.add(drum)
-  g.add(dome(4.0, 0x4fffe0, 9.4))
-  const lantern = solid(new THREE.CylinderGeometry(0.8, 0.8, 2.2, 10), 0xfff2c8, 10)
-  lantern.position.y = 15
-  g.add(lantern)
-  const tip = glowSprite(0x4fffe0, 4, 0.9)
-  tip.position.y = 16.4
-  g.add(tip)
-  // St Paul's Anglican Pro-Cathedral spire
-  const tower = neonBox(3.2, 17, 3.2, SAND)
-  tower.position.set(-12, 8.5, 6)
-  g.add(tower)
-  const spire = solid(new THREE.ConeGeometry(1.6, 9, 4), 0x4fffe0, 10)
-  spire.position.set(-12, 21.5, 6)
-  spire.rotation.y = Math.PI / 4
-  g.add(spire)
-  const halo = glowSprite(0xffc77a, 34, 0.12)
-  halo.position.y = 10
+  const DEEP = 0xe8a95c
+  const pts: Array<[number, number]> = []
+  const N = 5
+  for (let i = 0; i < N * 2; i++) {
+    const a = (i / (N * 2)) * Math.PI * 2 - Math.PI / 2
+    const r = i % 2 === 0 ? 23 : 14
+    pts.push([Math.cos(a) * r, Math.sin(a) * r])
+  }
+  for (let i = 0; i < pts.length; i++) {
+    const [ax, az] = pts[i]
+    const [bx, bz] = pts[(i + 1) % pts.length]
+    const len = Math.hypot(bx - ax, bz - az)
+    const ang = Math.atan2(-(bz - az), bx - ax)
+    // the wall: a broad sloped base (talus) under a thinner parapet
+    const base = neonBox(len + 1.2, 3.2, 3.4, DEEP)
+    base.position.set((ax + bx) / 2, 1.6, (az + bz) / 2)
+    base.rotation.y = ang
+    g.add(base)
+    const top = neonBox(len + 0.6, 2.2, 1.6, SAND)
+    top.position.set((ax + bx) / 2, 4.3, (az + bz) / 2)
+    top.rotation.y = ang
+    g.add(top)
+    // battlements
+    const k = Math.max(3, Math.floor(len / 2.4))
+    for (let j = 0; j < k; j++) {
+      const f = (j + 0.5) / k
+      const m = solid(new THREE.BoxGeometry(1.0, 0.9, 1.7), SAND, 10)
+      m.position.set(ax + (bx - ax) * f, 5.85, az + (bz - az) * f)
+      m.rotation.y = ang
+      g.add(m)
+    }
+  }
+  // sentry turrets on the bastion tips
+  for (let i = 0; i < pts.length; i += 2) {
+    const [x, z] = pts[i]
+    const t = solid(new THREE.CylinderGeometry(0.9, 1.1, 2.4, 8), SAND, 10)
+    t.position.set(x * 0.97, 7.2, z * 0.97)
+    g.add(t)
+    const c = solid(new THREE.ConeGeometry(1.15, 1.2, 8), 0x4fffe0, 10)
+    c.position.set(x * 0.97, 9.0, z * 0.97)
+    g.add(c)
+  }
+  // the keep (cavalier) in the middle, flat roof with corner turrets
+  const keep = neonBox(9, 8, 9, SAND)
+  keep.position.y = 4
+  g.add(keep)
+  const roof = neonBox(10, 1, 10, DEEP)
+  roof.position.y = 8.5
+  g.add(roof)
+  for (const [x, z] of [[-4.6, -4.6], [4.6, -4.6], [-4.6, 4.6], [4.6, 4.6]]) {
+    const t = solid(new THREE.CylinderGeometry(0.9, 1.0, 3, 8), SAND, 10)
+    t.position.set(x, 10.5, z)
+    g.add(t)
+    const c = solid(new THREE.ConeGeometry(1.1, 1.1, 8), 0x4fffe0, 10)
+    c.position.set(x, 12.6, z)
+    g.add(c)
+  }
+  const pole = solid(new THREE.CylinderGeometry(0.08, 0.08, 6, 5), 0xffffff, 10)
+  pole.position.y = 12
+  g.add(pole)
+  const flag = glowSprite(0x4fffe0, 3, 0.9)
+  flag.position.set(0, 15, 0)
+  g.add(flag)
+  const halo = glowSprite(0xffc77a, 44, 0.12)
+  halo.position.y = 8
   g.add(halo)
   return { obj: g }
 }
@@ -403,18 +445,37 @@ export function mdinaWalls(): Tickable {
       g.add(t)
     }
   }
-  // cathedral
+  // St Paul's Cathedral: a baroque church with a pedimented front and two squat square bell towers (no dome, no minarets)
   const cath = new THREE.Group()
   cath.position.set(21, 0, -12)
-  const cb = neonBox(7, 6, 9, 0xffc77a)
+  const cb = neonBox(8, 6, 11, 0xffc77a)
   cb.position.y = 3
   cath.add(cb)
-  cath.add(dome(3.0, 0x4fffe0, 6))
+  const ped = solid(new THREE.CylinderGeometry(4.6, 4.6, 8.4, 3), 0xffd9a0, 10)
+  ped.rotation.set(0, 0, Math.PI / 2)
+  ped.rotation.order = 'ZXY'
+  ped.position.set(0, 6.7, 5.2)
+  ped.scale.set(0.34, 1, 0.34)
+  ped.rotation.x = Math.PI / 2
+  cath.add(ped)
   for (const s of [-1, 1]) {
-    const bt = neonBox(1.6, 11, 1.6, 0xffc77a)
-    bt.position.set(s * 3.2, 5.5, 5)
+    const bt = neonBox(2.6, 8.5, 2.6, 0xffc77a)
+    bt.position.set(s * 3.6, 4.25, 5.6)
     cath.add(bt)
+    const belfry = neonBox(2.9, 1.6, 2.9, 0xffd9a0)
+    belfry.position.set(s * 3.6, 9.3, 5.6)
+    cath.add(belfry)
+    const cap = solid(new THREE.ConeGeometry(2.1, 2.2, 4), 0xe8a95c, 10)
+    cap.rotation.y = Math.PI / 4
+    cap.position.set(s * 3.6, 11.2, 5.6)
+    cath.add(cap)
   }
+  const cross = neonBox(0.25, 1.6, 0.25, 0xffffff)
+  cross.position.set(0, 9.4, 5.2)
+  cath.add(cross)
+  const arm = neonBox(1.0, 0.25, 0.25, 0xffffff)
+  arm.position.set(0, 9.7, 5.2)
+  cath.add(arm)
   g.add(cath)
   return { obj: g }
 }
