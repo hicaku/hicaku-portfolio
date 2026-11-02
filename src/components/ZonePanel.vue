@@ -250,6 +250,7 @@ const sheet = computed(() => [
         </div>
         <button class="btn primary big full" @click="emit('board', zone.id)">
           <Icon :name="trip.mode === 'plane' ? 'plane' : 'boat'" :size="18" /> <span>{{ trip.cta }}</span>
+          <kbd v-if="!state.isTouch" style="margin-left:8px;opacity:.7">E</kbd>
         </button>
         <!-- the world tour departs from the airports -->
         <template v-if="zone.kind === 'gate'">

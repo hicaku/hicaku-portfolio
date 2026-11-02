@@ -78,6 +78,12 @@ function board(id: string) {
   world?.warpTo(dest)
 }
 
+/** a ferry pier or airport gate card is open: E / Enter boards */
+function boardable() {
+  const k = state.panel ? zoneById(state.panel)?.kind : null
+  return k === 'pier' || k === 'gate'
+}
+
 const zoom = (f: number) => world?.zoomBy(f)
 
 onMounted(async () => {
@@ -144,6 +150,7 @@ onMounted(async () => {
       },
       onInteract: () => {
         if (props.holding || state.menu) return
+        if (boardable()) return board(state.panel!)
         // E on an auto-opened card pins it: the world pauses so you can read at leisure
         if (state.panel && state.panelAuto) state.panelAuto = false
         else if (!state.panel && state.near) openPanel(state.near)
@@ -231,6 +238,7 @@ let kIdx = 0
 function onKey(e: KeyboardEvent) {
   const k = e.key.toLowerCase()
   if (k === 'escape') closeOverlays()
+  if (k === 'enter' && !(e.target instanceof HTMLButtonElement) && !props.holding && !state.menu && boardable()) board(state.panel!)
   if (k === KONAMI[kIdx]) {
     kIdx++
     if (kIdx === KONAMI.length) {
