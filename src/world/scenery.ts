@@ -356,17 +356,14 @@ export function rumeliHisari(): Tickable {
 // ───────────────────────────── Malta ─────────────────────────────
 
 export function valletta(): Tickable {
-  // Valletta's bastioned fortifications: a star fort with sloped walls, pointed bastions and sentry turrets (gardjola)
+  // Valletta's fortifications: a rectangular fort with heavy square corner bastions and a gatehouse (not a star)
+  const root = new THREE.Group()
+  root.position.set(-16, 0, 26) // sits south-west of the Signal Tower so the tower has room
   const g = new THREE.Group()
+  root.add(g)
   const SAND = 0xffc77a
   const DEEP = 0xe8a95c
-  const pts: Array<[number, number]> = []
-  const N = 5
-  for (let i = 0; i < N * 2; i++) {
-    const a = (i / (N * 2)) * Math.PI * 2 - Math.PI / 2
-    const r = i % 2 === 0 ? 23 : 14
-    pts.push([Math.cos(a) * r, Math.sin(a) * r])
-  }
+  const pts: Array<[number, number]> = [[-15, -11], [15, -11], [15, 11], [-15, 11]]
   for (let i = 0; i < pts.length; i++) {
     const [ax, az] = pts[i]
     const [bx, bz] = pts[(i + 1) % pts.length]
@@ -392,15 +389,25 @@ export function valletta(): Tickable {
     }
   }
   // sentry turrets on the bastion tips
-  for (let i = 0; i < pts.length; i += 2) {
+  for (let i = 0; i < pts.length; i++) {
     const [x, z] = pts[i]
+    const bast = neonBox(7, 6.4, 7, DEEP)
+    bast.position.set(x, 3.2, z)
+    bast.rotation.y = Math.PI / 4
+    g.add(bast)
     const t = solid(new THREE.CylinderGeometry(0.9, 1.1, 2.4, 8), SAND, 10)
-    t.position.set(x * 0.97, 7.2, z * 0.97)
+    t.position.set(x, 7.6, z)
     g.add(t)
     const c = solid(new THREE.ConeGeometry(1.15, 1.2, 8), 0x4fffe0, 10)
-    c.position.set(x * 0.97, 9.0, z * 0.97)
+    c.position.set(x, 9.4, z)
     g.add(c)
   }
+  const gate = neonBox(6, 7, 3.4, SAND)
+  gate.position.set(0, 3.5, 11)
+  g.add(gate)
+  const arch = neonBox(2.4, 3.6, 3.6, 0x120a24)
+  arch.position.set(0, 1.8, 11.1)
+  g.add(arch)
   // the keep (cavalier) in the middle, flat roof with corner turrets
   const keep = neonBox(9, 8, 9, SAND)
   keep.position.y = 4
@@ -425,7 +432,7 @@ export function valletta(): Tickable {
   const halo = glowSprite(0xffc77a, 44, 0.12)
   halo.position.y = 8
   g.add(halo)
-  return { obj: g }
+  return { obj: root }
 }
 
 export function mdinaWalls(): Tickable {
