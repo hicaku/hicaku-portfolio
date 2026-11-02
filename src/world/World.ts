@@ -293,6 +293,16 @@ export class World {
     }
   }
 
+  /** Put the player back where they were on the last visit (ignored if that spot is not walkable ground). */
+  restoreAt(x: number, z: number) {
+    if (!isWalkable(x, z)) return
+    this.pos.set(x, GROUND_Y, z)
+    this.vel.set(0, 0, 0)
+    this.island = islandOf(x, z)
+    this.camLook.set(x, 0, z)
+    this.snapCamera()
+  }
+
   /** Leave the splash hold — the camera swoops down to the player. */
   begin() {
     this.introHold = false

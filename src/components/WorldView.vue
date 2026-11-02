@@ -20,6 +20,17 @@ let world: World | null = null
 let disposed = false
 /** the place you just arrived at (pier, airport gate, spawn): its card stays shut until you step away and come back */
 let quiet = ''
+let restoredAt = 0
+const LAST_KEY = 'hicaku:last'
+let lastSave = 0
+function saveSpot(x: number, z: number) {
+  const now = performance.now()
+  if (now - lastSave < 1500 || !state.entered) return
+  lastSave = now
+  try {
+    localStorage.setItem(LAST_KEY, JSON.stringify({ x: Math.round(x * 10) / 10, z: Math.round(z * 10) / 10 }))
+  } catch { /* storage unavailable */ }
+}
 
 // ───────────────────────── world events ─────────────────────────
 
@@ -103,6 +114,7 @@ onMounted(async () => {
       },
       onNear: (id) => {
         state.near = id
+        if (id && performance.now() - restoredAt < 2000) quiet = id // standing in a place after a reload: no card until you step away
         if (id !== quiet) quiet = ''
         if (props.holding || state.menu || (id && id === quiet)) return
         if (id && (!state.panel || state.panelAuto)) {
@@ -163,6 +175,7 @@ onMounted(async () => {
       onFrame: (p) => {
         if (!state.moved && Math.hypot(p.x - state.pos.x, p.z - state.pos.z) > 8 && state.pos.x !== 0) state.moved = true
         state.pos = { x: p.x, z: p.z }
+        saveSpot(p.x, p.z)
         state.island = p.island
         state.side = p.side
         state.place = p.place
@@ -174,6 +187,14 @@ onMounted(async () => {
     world.restoreGems([...state.gems])
     if (state.secret) world.unlockSecret(true)
     quiet = state.near ?? ''
+    try {
+      const raw = localStorage.getItem(LAST_KEY)
+      const last = raw ? (JSON.parse(raw) as { x: number; z: number }) : null
+      if (last && Number.isFinite(last.x) && Number.isFinite(last.z) && state.visited.length) {
+        world.restoreAt(last.x, last.z)
+        restoredAt = performance.now()
+      }
+    } catch { /* ignore */ }
     if (!props.holding) world.begin()
     if (!props.active) world.setActive(false)
     world.refreshLabels(labelText)
