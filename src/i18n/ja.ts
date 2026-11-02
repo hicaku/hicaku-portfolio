@@ -205,6 +205,13 @@ const ja: Record<string, string> = {
   'contact.kicker': '最終レベル · マルチプレイ',
   'contact.lead':
     'セント・エルモ砦からの信号は遠くまで届きます。丁寧に仕上げるVue / React / TypeScript / Goエンジニアをお探しなら、ぜひお話ししましょう。',
+  'contact.formTitle': "メッセージを送る",
+  'contact.name': "お名前（任意）",
+  'contact.reply': "メールアドレス（返信用）",
+  'contact.msg': "メッセージを入力…",
+  'contact.send': "送信",
+  'contact.sent': "送信しました。ありがとうございます！",
+  'contact.fail': "送信できませんでした。代わりにメールアドレスをコピーしてください。",
   'contact.copy': 'メールをコピー',
   'contact.based': '拠点',
   'contact.status': '状況',

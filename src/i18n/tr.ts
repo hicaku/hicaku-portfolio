@@ -205,6 +205,13 @@ const tr: Record<string, string> = {
   'contact.kicker': 'Son seviye · Çok oyunculu',
   'contact.lead':
     'St Elmo Kalesi\'nden gelen sinyal çok uzağa ulaşır. Özenle teslim eden bir Vue / React / TypeScript / Go mühendisi arıyorsanız, konuşalım.',
+  'contact.formTitle': "Bana mesaj gönder",
+  'contact.name': "Adın (isteğe bağlı)",
+  'contact.reply': "E-postan (yanıtlayabilmem için)",
+  'contact.msg': "Mesajını yaz…",
+  'contact.send': "Mesajı gönder",
+  'contact.sent': "Gönderildi. Teşekkürler!",
+  'contact.fail': "Gönderilemedi. Lütfen e-postamı kopyala.",
   'contact.copy': 'E-postayı kopyala',
   'contact.based': 'Yaşadığı yer',
   'contact.status': 'Durum',

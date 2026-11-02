@@ -205,6 +205,13 @@ const es: Record<string, string> = {
   'contact.kicker': 'Nivel final · Multijugador',
   'contact.lead':
     'La señal del fuerte de San Telmo llega muy lejos. Si buscas un ingeniero de Vue / React / TypeScript / Go que entrega con cuidado, hablemos.',
+  'contact.formTitle': "Envíame un mensaje",
+  'contact.name': "Tu nombre (opcional)",
+  'contact.reply': "Tu correo (para poder responderte)",
+  'contact.msg': "Escribe tu mensaje…",
+  'contact.send': "Enviar mensaje",
+  'contact.sent': "¡Enviado! Gracias.",
+  'contact.fail': "No se pudo enviar. Copia mi correo, por favor.",
   'contact.copy': 'Copiar correo',
   'contact.based': 'Residencia',
   'contact.status': 'Situación',

@@ -213,6 +213,13 @@ export const en: Record<string, string> = {
   'contact.kicker': 'Final level · Multiplayer',
   'contact.lead':
     "The signal from Fort St Elmo carries a long way. If you're hiring a Vue / React / TypeScript / Go engineer who ships carefully, let's talk.",
+  'contact.formTitle': "Send me a message",
+  'contact.name': "Your name (optional)",
+  'contact.reply': "Your email (so I can reply)",
+  'contact.msg': "Write your message…",
+  'contact.send': "Send message",
+  'contact.sent': "Sent. Thank you!",
+  'contact.fail': "Could not send. Please copy my email instead.",
   'contact.copy': 'Copy email',
   'contact.based': 'Based in',
   'contact.status': 'Status',

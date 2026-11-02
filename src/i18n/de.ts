@@ -205,6 +205,13 @@ const de: Record<string, string> = {
   'contact.kicker': 'Letztes Level · Mehrspieler',
   'contact.lead':
     'Das Signal von Fort St. Elmo reicht weit. Wenn du einen Vue- / React- / TypeScript- / Go-Entwickler suchst, der sorgfältig liefert, lass uns reden.',
+  'contact.formTitle': "Schreib mir eine Nachricht",
+  'contact.name': "Dein Name (optional)",
+  'contact.reply': "Deine E-Mail (für meine Antwort)",
+  'contact.msg': "Deine Nachricht…",
+  'contact.send': "Nachricht senden",
+  'contact.sent': "Gesendet. Danke!",
+  'contact.fail': "Senden fehlgeschlagen. Bitte kopiere stattdessen meine E-Mail.",
   'contact.copy': 'E-Mail kopieren',
   'contact.based': 'Wohnort',
   'contact.status': 'Status',

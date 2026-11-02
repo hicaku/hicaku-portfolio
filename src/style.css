@@ -1861,3 +1861,10 @@ button.brand:hover {
     margin-top: 18px;
   }
 }
+
+.msg { display: grid; gap: 8px; margin: 18px 0 6px; }
+.msg h4 { margin: 0 0 2px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; opacity: .75; }
+.msg input, .msg textarea { width: 100%; box-sizing: border-box; padding: 10px 12px; border-radius: 10px; border: 1px solid rgba(255,255,255,.16); background: rgba(255,255,255,.05); color: inherit; font: inherit; resize: vertical; }
+.msg input:focus, .msg textarea:focus { outline: 2px solid var(--c, #00f0ff); outline-offset: 1px; }
+.msg .hp { position: absolute; left: -9999px; width: 1px; height: 1px; opacity: 0; }
+.msg-err { margin: 0; color: #ff7a8a; font-size: 13px; }

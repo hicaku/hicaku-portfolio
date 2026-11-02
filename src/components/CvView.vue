@@ -40,7 +40,6 @@ onMounted(() => window.scrollTo({ top: 0 }))
         <LangSwitch />
         <a class="icon-link" :href="profile.linkedin" target="_blank" rel="noopener" aria-label="LinkedIn"><Icon name="linkedin" /></a>
         <a class="icon-link" :href="profile.github" target="_blank" rel="noopener" aria-label="GitHub"><Icon name="github" /></a>
-        <a class="icon-link" :href="`mailto:${profile.email}`" aria-label="Email"><Icon name="mail" /></a>
         <a class="btn ghost" href="/Hikmet-Kufteoglu-CV.pdf" target="_blank" rel="noopener">PDF</a>
         <button class="btn primary" @click="printCv"><Icon name="print" :size="16" /> <span>Print / Save PDF</span></button>
       </div>
@@ -56,7 +55,7 @@ onMounted(() => window.scrollTo({ top: 0 }))
           <span>{{ t('cv.relocation') }}</span>
         </p>
         <p class="cv-contact">
-          <a :href="`mailto:${profile.email}`">{{ profile.email }}</a>
+          <span>{{ profile.email }}</span>
           <a :href="profile.linkedin" target="_blank" rel="noopener">linkedin.com/in/hicaku</a>
           <a :href="profile.github" target="_blank" rel="noopener">github.com/hicaku</a>
         </p>

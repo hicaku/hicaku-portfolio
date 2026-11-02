@@ -146,7 +146,7 @@ onMounted(async () => {
           return
         }
         if (z?.kind === 'tour') markVisit(id)
-        openPanel(id)
+        openPanel(id, true) // a walk-away card: it never freezes the world
       },
       onInteract: () => {
         if (props.holding || state.menu) return

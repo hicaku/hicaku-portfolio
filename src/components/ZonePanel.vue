@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, reactive, ref } from 'vue'
 import { hobbies, profile, projects, roles, skills } from '../data/cv'
 import { LORE } from '../data/lore'
 import { loreOf, noteOf, t, tx } from '../i18n'
@@ -144,6 +144,27 @@ const title = computed(() => {
   if (zone.value.kind === 'secret') return t('secret.title')
   return zname(zone.value)
 })
+
+const msg = reactive({ name: '', email: '', text: '', site: '', busy: false, done: false, err: false })
+async function sendMsg() {
+  if (msg.busy || msg.done) return
+  msg.busy = true
+  msg.err = false
+  try {
+    const r = await fetch('/api/contact', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name: msg.name, email: msg.email, message: msg.text, site: msg.site }),
+    })
+    if (!r.ok) throw new Error(String(r.status))
+    msg.done = true
+    toast({ title: t('contact.sent'), text: '', tone: 'lime' }, 3600)
+  } catch {
+    msg.err = true
+  } finally {
+    msg.busy = false
+  }
+}
 
 async function copyEmail() {
   try {
@@ -321,11 +342,21 @@ const sheet = computed(() => [
       <template v-else-if="zone.kind === 'contact'">
         <p class="lead">{{ t('contact.lead') }}</p>
         <div class="contact">
-          <a class="btn primary" :href="`mailto:${profile.email}`"><Icon name="mail" :size="18" /> {{ profile.email }}</a>
-          <button class="btn ghost" @click="copyEmail"><Icon name="copy" :size="16" /> {{ t('contact.copy') }}</button>
+          <button class="btn primary" @click="copyEmail"><Icon name="copy" :size="16" /> {{ profile.email }}</button>
           <a class="btn ghost" :href="profile.linkedin" target="_blank" rel="noopener"><Icon name="linkedin" :size="16" /> LinkedIn</a>
           <a class="btn ghost" :href="profile.github" target="_blank" rel="noopener"><Icon name="github" :size="16" /> GitHub</a>
         </div>
+        <form class="msg" @submit.prevent="sendMsg">
+          <h4>{{ t('contact.formTitle') }}</h4>
+          <input v-model="msg.name" type="text" maxlength="80" :placeholder="t('contact.name')" autocomplete="name" />
+          <input v-model="msg.email" type="email" maxlength="120" :placeholder="t('contact.reply')" autocomplete="email" />
+          <textarea v-model="msg.text" rows="4" maxlength="2000" required :placeholder="t('contact.msg')" />
+          <input v-model="msg.site" class="hp" type="text" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <button class="btn primary" type="submit" :disabled="msg.busy || msg.done || msg.text.trim().length < 5">
+            <Icon name="mail" :size="16" /> {{ msg.done ? t('contact.sent') : t('contact.send') }}
+          </button>
+          <p v-if="msg.err" class="msg-err">{{ t('contact.fail') }}</p>
+        </form>
         <dl class="sheet">
           <div><dt>{{ t('contact.based') }}</dt><dd>{{ t('place.malta') }}</dd></div>
           <div><dt>{{ t('contact.status') }}</dt><dd>{{ t('cv.relocation') }}</dd></div>
@@ -351,7 +382,7 @@ const sheet = computed(() => [
         <p class="lead">{{ t('secret.lead') }}</p>
         <p class="lead jp">{{ t('secret.jp') }}</p>
         <div class="contact">
-          <a class="btn primary" :href="`mailto:${profile.email}?subject=Hello%20from%20the%20secret%20level`"><Icon name="mail" :size="18" /> {{ t('secret.mail') }}</a>
+          <button class="btn primary" @click="copyEmail"><Icon name="copy" :size="18" /> {{ t('secret.mail') }}</button>
           <button class="btn ghost" @click="openCv"><Icon name="doc" :size="16" /> {{ t('secret.cv') }}</button>
         </div>
       </template>
