@@ -278,9 +278,17 @@ export const ROUTE_MT: P[] = [zp('mla'), zp('fasttrack'), zp('arcade'), zp('skil
 
 // keep the bridge crossing points reachable for other modules
 /** Roads that lead off the bridge, so nobody is left in the dark after crossing: Asian end → Client Work, European end → First Commits. */
-export const ROUTE_LINKS: P[][] = [
-  [bosphorus.b, zp('firmasoft')],
-  [bosphorus.a, zp('datapare')],
-]
+export const ROUTE_LINKS: P[][] = [] // no road to the bridge: the ferry is the way (the bridge is an on-foot shortcut)
+
+/** Where the neon road passes the Bosphorus Bridge: the "ferry or bridge?" signpost stands here. */
+export const FORK: P = (() => {
+  const [ax, az] = zp('datapare')
+  const [bx, bz] = zp('pierE')
+  const [px, pz] = bosphorus.a
+  const dx = bx - ax
+  const dz = bz - az
+  const k = Math.max(0, Math.min(1, ((px - ax) * dx + (pz - az) * dz) / (dx * dx + dz * dz)))
+  return [ax + dx * k, az + dz * k]
+})()
 
 export const BOSPHORUS_BRIDGE = { a: bosphorus.a, b: bosphorus.b }

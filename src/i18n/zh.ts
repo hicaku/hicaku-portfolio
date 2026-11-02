@@ -15,6 +15,7 @@ const zh: Record<string, string> = {
   'place.ist': '伊斯坦布尔',
   'hud.map': '地图',
   'hud.tour': '旅行',
+  'world.fork': '⛴ 渡轮：沿路前行 · 🌉 大桥：步行过桥',
   'hud.cvLong': '完整简历',
   'hud.cvShort': '简历',
   'hud.explored': '已探索',

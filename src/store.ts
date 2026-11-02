@@ -56,6 +56,8 @@ export const state = reactive({
   worldReady: false,
   entered: false,
   panel: null as string | null,
+  /** the open panel was opened by walking up to a place: it closes again when you walk away and never freezes the world */
+  panelAuto: false,
   menu: null as null | 'warp' | 'trophies',
   /** open the Map already scrolled to this group (e.g. 'tour') */
   menuFocus: null as string | null,

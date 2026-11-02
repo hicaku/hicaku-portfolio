@@ -53,6 +53,7 @@ import {
   ROUTE_AS,
   ROUTE_EU,
   ROUTE_LINKS,
+  FORK,
   ROUTE_MT,
   SECRET_PATH_START,
   SECRET_ZONE,
@@ -503,6 +504,8 @@ export class World {
       this.scene.add(gr)
       this.tagRegion(gr, rid)
     }
+    // the fork where the road meets the bridge: ferry (follow the road) or bridge (walk on)
+    this.makeLabel('fork', 'Ferry ahead · or cross the bridge on foot', '', '#00f0ff', FORK[0], FORK[1], 11, { scenic: true, range: 170 })
     // the edge of the map
     this.borders = buildBorders(IST_BOUNDS)
     this.scene.add(this.borders.obj)
@@ -654,7 +657,7 @@ export class World {
 
   /** Zoom the camera in (<1) or out (>1) by a factor. */
   zoomBy(factor: number) {
-    this.userZoom = Math.min(2.4, Math.max(0.45, this.userZoom * factor))
+    this.userZoom = Math.min(3.6, Math.max(0.45, this.userZoom * factor))
   }
 
   private buildSecret() {
@@ -1258,7 +1261,15 @@ export class World {
     const best = { id: null as string | null, d: Infinity }
     const consider = (z: ZoneDef) => {
       if (z.island !== this.island && z.id !== SECRET_ZONE.id) return
-      const d = Math.hypot(this.pos.x - z.x, this.pos.z - z.z)
+      let d = Math.hypot(this.pos.x - z.x, this.pos.z - z.z)
+      if (z.kind === 'pier') {
+        // the whole plank counts, so you can board from the very end of the pier where the boat is
+        const dock = z.id === 'pierE' ? DOCK_E : DOCK_A
+        const sx = dock[0] - z.x
+        const sz = dock[1] - z.z
+        const k = Math.max(0, Math.min(1, ((this.pos.x - z.x) * sx + (this.pos.z - z.z) * sz) / (sx * sx + sz * sz)))
+        d = Math.hypot(this.pos.x - (z.x + sx * k), this.pos.z - (z.z + sz * k)) * (z.radius / 7)
+      }
       if (d < z.radius && d < best.d) {
         best.d = d
         best.id = z.id

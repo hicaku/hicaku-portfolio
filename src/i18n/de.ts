@@ -16,6 +16,7 @@ const de: Record<string, string> = {
   'place.ist': 'Istanbul',
   'hud.map': 'Karte',
   'hud.tour': 'Reise',
+  'world.fork': '⛴ Fähre: der Straße folgen · 🌉 Brücke: zu Fuß hinüber',
   'hud.cvLong': 'Voller Lebenslauf',
   'hud.cvShort': 'CV',
   'hud.explored': 'Erkundet',

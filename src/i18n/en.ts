@@ -21,6 +21,7 @@ export const en: Record<string, string> = {
   'place.ist': 'Istanbul',
   'hud.map': 'Map',
   'hud.tour': 'Tour',
+  'world.fork': '⛴ Ferry: follow the road · 🌉 Bridge: walk across',
   'hud.cvLong': 'Full CV',
   'hud.cvShort': 'CV',
   'hud.explored': 'Explored',

@@ -18,12 +18,15 @@ const host = ref<HTMLElement>()
 const canvas = ref<HTMLCanvasElement>()
 let world: World | null = null
 let disposed = false
+/** the place you just arrived at (pier, airport gate, spawn): its card stays shut until you step away and come back */
+let quiet = ''
 
 // ───────────────────────── world events ─────────────────────────
 
-function openPanel(id: string) {
+function openPanel(id: string, auto = false) {
   state.menu = null
   state.panel = id
+  state.panelAuto = auto
   if (id === SECRET_ZONE.id && !state.secretFound) {
     state.secretFound = true
     toast({ title: t('toast.secretFound'), text: t('toast.secretFoundText'), tone: 'red' }, 6000)
@@ -31,6 +34,7 @@ function openPanel(id: string) {
 }
 
 function closeOverlays() {
+  state.panelAuto = false
   state.panel = null
   state.menu = null
 }
@@ -91,7 +95,18 @@ onMounted(async () => {
         state.worldFailed = true
         state.mode = 'cv'
       },
-      onNear: (id) => (state.near = id),
+      onNear: (id) => {
+        state.near = id
+        if (id !== quiet) quiet = ''
+        if (props.holding || state.menu || (id && id === quiet)) return
+        if (id && (!state.panel || state.panelAuto)) {
+          // walking up to a place opens its card straight away; walking off closes it again
+          if (state.panel !== id) openPanel(id, true)
+        } else if (!id && state.panel && state.panelAuto) {
+          state.panel = null
+          state.panelAuto = false
+        }
+      },
       onVisit: (id) => markVisit(id),
       onShard: (i, total) => {
         if (!state.shards.includes(i)) state.shards.push(i)
@@ -112,12 +127,14 @@ onMounted(async () => {
         }
       },
       onRideEnd: (id) => {
+        quiet = id
         const z = zoneById(id)
         toast({ title: t('toast.docked', { name: z ? zname(z) : '' }), text: t('toast.mind'), tone: 'lime' }, 3600)
       },
       onWarpEnd: (id, flew) => {
         const z = zoneById(id)
         if (z?.kind === 'gate') {
+          quiet = id
           // landing from a flight: no panel, just a welcome
           if (flew) toast({ title: z.island === 'mt' ? t('toast.welcomeMalta') : t('toast.welcomeIst'), text: t('toast.landed'), tone: 'lime' }, 4200)
           return
@@ -126,8 +143,10 @@ onMounted(async () => {
         openPanel(id)
       },
       onInteract: () => {
-        if (props.holding || state.panel || state.menu) return
-        if (state.near) openPanel(state.near)
+        if (props.holding || state.menu) return
+        // E on an auto-opened card pins it: the world pauses so you can read at leisure
+        if (state.panel && state.panelAuto) state.panelAuto = false
+        else if (!state.panel && state.near) openPanel(state.near)
       },
       onLabelClick: (id) => {
         if (props.holding) return
@@ -147,6 +166,7 @@ onMounted(async () => {
     world.restoreShards([...state.shards])
     world.restoreGems([...state.gems])
     if (state.secret) world.unlockSecret(true)
+    quiet = state.near ?? ''
     if (!props.holding) world.begin()
     if (!props.active) world.setActive(false)
     world.refreshLabels(labelText)
@@ -189,15 +209,16 @@ function syncInset() {
 }
 
 const labelText = (id: string) => {
+  if (id === 'fork') return { name: t('world.fork'), tag: '' }
   const z = allZones().find((q) => q.id === id)
   return z ? { name: zname(z), tag: ztag(z) } : null
 }
 watch(lang, () => world?.refreshLabels(labelText))
 
 watch(
-  () => [state.panel, state.menu],
+  () => [state.panel, state.menu, state.panelAuto],
   () => {
-    world?.setPaused(!!state.panel || !!state.menu)
+    world?.setPaused((!!state.panel && !state.panelAuto) || !!state.menu)
     world?.setPortrait(state.panel === 'player')
     syncInset()
   },

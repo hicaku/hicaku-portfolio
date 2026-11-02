@@ -16,6 +16,7 @@ const tr: Record<string, string> = {
   'place.ist': 'İstanbul',
   'hud.map': 'Harita',
   'hud.tour': 'Tur',
+  'world.fork': '⛴ Vapur: yolu takip et · 🌉 Köprü: yürüyerek geç',
   'hud.cvLong': 'Tam CV',
   'hud.cvShort': 'CV',
   'hud.explored': 'Keşfedilen',

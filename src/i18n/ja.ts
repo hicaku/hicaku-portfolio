@@ -16,6 +16,7 @@ const ja: Record<string, string> = {
   'place.ist': 'イスタンブール',
   'hud.map': 'マップ',
   'hud.tour': '旅',
+  'world.fork': '⛴ フェリー：道なりに進む · 🌉 橋：歩いて渡る',
   'hud.cvLong': 'CV全文',
   'hud.cvShort': 'CV',
   'hud.explored': '探索済み',
